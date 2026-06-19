@@ -1,55 +1,64 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ninafx Login</title>
-
-<style>
-body{
-font-family:Arial,sans-serif;
-background:#0f172a;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
-}
-
-.card{
-background:#1e293b;
-padding:30px;
-border-radius:15px;
-text-align:center;
-width:350px;
-}
-
-button{
-background:#ff444f;
-color:white;
-border:none;
-padding:15px 25px;
-font-size:16px;
-border-radius:8px;
-cursor:pointer;
-}
-</style>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ninafx Dashboard</title>
 </head>
 
-<body>
+<body style="font-family:Arial;text-align:center;padding-top:80px">
 
-<div class="card">
-
-<h1>Ninafx Login</h1>
+<h1>Ninafx Dashboard</h1>
 
 <a href="https://oauth.deriv.com/oauth2/authorize?app_id=33B8TV783NLThvGjFGeE7">
-<button>Login with Deriv</button>
+<button style="padding:15px 30px;font-size:18px">
+Login with Deriv
+</button>
 </a>
 
-</div>
+<h3 id="status">Not Connected</h3>
+
+<p>Account: <span id="account">-</span></p>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+
+const token = params.get("token1");
+
+if(token){
+
+document.getElementById("status").innerText =
+"Logged In";
+
+const ws = new WebSocket(
+"wss://ws.derivws.com/websockets/v3?app_id=1089"
+);
+
+ws.onopen = () => {
+
+ws.send(JSON.stringify({
+authorize: token
+}));
+
+};
+
+ws.onmessage = (msg) => {
+
+const data = JSON.parse(msg.data);
+
+if(data.msg_type === "authorize"){
+
+document.getElementById("account").innerText =
+data.authorize.loginid;
+
+}
+
+};
+
+}
+
+</script>
 
 </body>
 </html>
