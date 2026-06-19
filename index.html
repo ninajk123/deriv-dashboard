@@ -17,7 +17,6 @@ justify-content:center;
 align-items:center;
 min-height:100vh;
 }
-
 .card{
 width:380px;
 background:#1e293b;
@@ -25,12 +24,7 @@ padding:25px;
 border-radius:15px;
 box-shadow:0 0 20px rgba(0,0,0,.3);
 }
-
-h2{
-text-align:center;
-margin-bottom:20px;
-}
-
+h2{text-align:center;}
 input{
 width:100%;
 padding:12px;
@@ -39,7 +33,6 @@ border-radius:8px;
 margin-bottom:10px;
 box-sizing:border-box;
 }
-
 button{
 width:100%;
 padding:12px;
@@ -51,12 +44,10 @@ cursor:pointer;
 font-size:16px;
 margin-top:8px;
 }
-
 .info{
 margin-top:20px;
 line-height:2;
 }
-
 .status{
 padding:10px;
 border-radius:8px;
@@ -67,6 +58,7 @@ text-align:center;
 </style>
 
 </head>
+
 <body>
 
 <div class="card">
@@ -80,14 +72,10 @@ Not Connected
 <input
 type="password"
 id="token"
-placeholder="Paste Deriv PAT Token">
+placeholder="Paste Deriv API Token">
 
 <button onclick="connectDeriv()">
 Connect Account
-</button>
-
-<button onclick="logout()">
-Logout
 </button>
 
 <div class="info">
@@ -103,35 +91,22 @@ Logout
 const APP_ID = 1089;
 let ws;
 
-window.onload = () => {
-const savedToken = localStorage.getItem("deriv_token");
-
-if(savedToken){
-document.getElementById("token").value = savedToken;
-connectDeriv();
-}
-};
-
 function connectDeriv(){
 
-const token =
-document.getElementById("token").value.trim();
+const token = document.getElementById("token").value.trim();
 
 if(!token){
-alert("Enter PAT token");
+alert("Enter token");
 return;
 }
 
-localStorage.setItem("deriv_token",token);
-
-document.getElementById("status").innerText =
-"Connecting...";
+document.getElementById("status").innerText = "Connecting...";
 
 ws = new WebSocket(
-`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`
+"wss://ws.derivws.com/websockets/v3?app_id=" + APP_ID
 );
 
-ws.onopen = () => {
+ws.onopen = function(){
 
 ws.send(JSON.stringify({
 authorize: token
@@ -139,7 +114,7 @@ authorize: token
 
 };
 
-ws.onmessage = (event) => {
+ws.onmessage = function(event){
 
 const data = JSON.parse(event.data);
 
@@ -148,7 +123,11 @@ if(data.error){
 document.getElementById("status").innerText =
 "Authorization Failed";
 
-alert(data.error.message);
+alert(
+"Error Code: " + data.error.code +
+"\nMessage: " + data.error.message
+);
+
 return;
 }
 
@@ -165,34 +144,18 @@ data.authorize.balance;
 
 document.getElementById("currency").innerText =
 data.authorize.currency;
-
 }
 
 };
 
-ws.onerror = () => {
+ws.onerror = function(){
+
 document.getElementById("status").innerText =
 "Connection Error";
+
+alert("WebSocket connection failed");
+
 };
-
-}
-
-function logout(){
-
-localStorage.removeItem("deriv_token");
-
-if(ws){
-ws.close();
-}
-
-document.getElementById("token").value = "";
-
-document.getElementById("status").innerText =
-"Not Connected";
-
-document.getElementById("account").innerText = "-";
-document.getElementById("balance").innerText = "-";
-document.getElementById("currency").innerText = "-";
 
 }
 
