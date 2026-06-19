@@ -1,21 +1,21 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ninafx Dashboard</title>
 
 <style>
 body{
-font-family:Arial,sans-serif;
 background:#0f172a;
-color:white;
+font-family:Arial,sans-serif;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
 margin:0;
+color:white;
 }
 
 .card{
@@ -28,12 +28,12 @@ text-align:center;
 
 button{
 background:#ff444f;
-border:none;
-padding:12px 20px;
 color:white;
-font-size:16px;
+border:none;
+padding:12px 24px;
 border-radius:8px;
 cursor:pointer;
+font-size:16px;
 }
 
 .info{
@@ -41,38 +41,28 @@ margin-top:20px;
 text-align:left;
 }
 </style>
+
 </head>
 
 <body>
 
 <div class="card">
 
-<a target="_blank"
-href="https://oauth.deriv.com/oauth2/authorize?app_id=33B8TV783NLThvGjFGeE7">
-Login with Deriv
+<h2>Ninafx Dashboard</h2>
+
+<a href="https://oauth.deriv.com/oauth2/authorize?app_id=33B8TV783NLThvGjFGeE7">
+<button>Login with Deriv</button>
 </a>
 
 <div class="info">
-<p>Status: <span id="status">Not Connected</span></p>
-<p>Account: <span id="loginid">-</span></p>
-<p>Balance: <span id="balance">-</span></p>
-<p>Currency: <span id="currency">-</span></p>
+<p>Status: Not Connected</p>
+<p>Account: -</p>
+<p>Balance: -</p>
+<p>Currency: -</p>
 </div>
 
 </div>
-
-<script>
-
-const APP_ID = "33B8TV783NLThvGjFGeE7";
-
-document.getElementById("loginBtn").onclick = () => {
-
-window.location.href =
-`https://oauth.deriv.com/oauth2/authorize?app_id=${APP_ID}`;
-
-};
-
-</script>
 
 </body>
 </html>
+
