@@ -1,59 +1,39 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ninafx Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ninafx Login</title>
 
 <style>
 body{
-margin:0;
 font-family:Arial,sans-serif;
 background:#0f172a;
 color:white;
 display:flex;
 justify-content:center;
 align-items:center;
-min-height:100vh;
+height:100vh;
+margin:0;
 }
+
 .card{
-width:380px;
 background:#1e293b;
-padding:25px;
+padding:30px;
 border-radius:15px;
-box-shadow:0 0 20px rgba(0,0,0,.3);
+text-align:center;
+width:350px;
 }
-h2{text-align:center;}
-input{
-width:100%;
-padding:12px;
-border:none;
-border-radius:8px;
-margin-bottom:10px;
-box-sizing:border-box;
-}
+
 button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:8px;
 background:#ff444f;
 color:white;
-cursor:pointer;
+border:none;
+padding:15px 25px;
 font-size:16px;
-margin-top:8px;
-}
-.info{
-margin-top:20px;
-line-height:2;
-}
-.status{
-padding:10px;
 border-radius:8px;
-background:#334155;
-margin-bottom:15px;
-text-align:center;
+cursor:pointer;
 }
 </style>
 
@@ -63,105 +43,13 @@ text-align:center;
 
 <div class="card">
 
-<h2>Ninafx Dashboard</h2>
+<h1>Ninafx Login</h1>
 
-<div class="status" id="status">
-Not Connected
-</div>
-
-<input
-type="password"
-id="token"
-placeholder="Paste Deriv API Token">
-
-<button onclick="connectDeriv()">
-Connect Account
-</button>
-
-<div class="info">
-<div>Account ID: <span id="account">-</span></div>
-<div>Balance: <span id="balance">-</span></div>
-<div>Currency: <span id="currency">-</span></div>
-</div>
+<a href="https://oauth.deriv.com/oauth2/authorize?app_id=33B8TV783NLThvGjFGeE7">
+<button>Login with Deriv</button>
+</a>
 
 </div>
-
-<script>
-
-const APP_ID = 1089;
-let ws;
-
-function connectDeriv(){
-
-const token = document.getElementById("token").value.trim();
-
-if(!token){
-alert("Enter token");
-return;
-}
-
-document.getElementById("status").innerText = "Connecting...";
-
-ws = new WebSocket(
-"wss://ws.derivws.com/websockets/v3?app_id=" + APP_ID
-);
-
-ws.onopen = function(){
-
-ws.send(JSON.stringify({
-authorize: token
-}));
-
-};
-
-ws.onmessage = function(event){
-
-const data = JSON.parse(event.data);
-
-if(data.error){
-
-document.getElementById("status").innerText =
-"Authorization Failed";
-
-alert(
-"ERROR CODE: " + data.error.code +
-"\nERROR MESSAGE: " + data.error.message
-);
-
-console.log(data);
-
-return;
-}
-
-if(data.msg_type === "authorize"){
-
-document.getElementById("status").innerText =
-"Connected";
-
-document.getElementById("account").innerText =
-data.authorize.loginid;
-
-document.getElementById("balance").innerText =
-data.authorize.balance;
-
-document.getElementById("currency").innerText =
-data.authorize.currency;
-}
-
-};
-
-ws.onerror = function(){
-
-document.getElementById("status").innerText =
-"Connection Error";
-
-alert("WebSocket connection failed");
-
-};
-
-}
-
-</script>
 
 </body>
 </html>
