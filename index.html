@@ -1,44 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Deriv Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Ninafx Dashboard</title>
+
 <style>
 body{
-font-family:Arial;
+font-family:Arial,sans-serif;
+background:#0f172a;
+color:white;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
-background:#0f172a;
-color:white;
+margin:0;
+}
+
+.card{
+background:#1e293b;
+padding:30px;
+border-radius:15px;
+width:350px;
+text-align:center;
 }
 
 button{
-padding:15px 25px;
-border:none;
-border-radius:10px;
 background:#ff444f;
+border:none;
+padding:12px 20px;
 color:white;
-font-size:18px;
+font-size:16px;
+border-radius:8px;
 cursor:pointer;
+}
+
+.info{
+margin-top:20px;
+text-align:left;
 }
 </style>
 </head>
 
 <body>
 
-<div>
-<h1>Deriv Dashboard</h1>
+<div class="card">
 
-<button onclick="login()">
+<h2>Ninafx Dashboard</h2>
+
+<button id="loginBtn">
 Login with Deriv
 </button>
+
+<div class="info">
+<p>Status: <span id="status">Not Connected</span></p>
+<p>Account: <span id="loginid">-</span></p>
+<p>Balance: <span id="balance">-</span></p>
+<p>Currency: <span id="currency">-</span></p>
+</div>
+
 </div>
 
 <script>
-function login(){
-alert("We'll connect this after getting your App ID");
-}
+
+const APP_ID = "33B8TV783NLThvGjFGeE7";
+
+document.getElementById("loginBtn").onclick = () => {
+
+window.location.href =
+`https://oauth.deriv.com/oauth2/authorize?app_id=${APP_ID}`;
+
+};
+
 </script>
 
 </body>
