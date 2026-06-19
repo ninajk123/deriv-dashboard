@@ -1,67 +1,202 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ninafx Dashboard</title>
 
 <style>
 body{
-background:#0f172a;
+margin:0;
 font-family:Arial,sans-serif;
+background:#0f172a;
+color:white;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
-margin:0;
-color:white;
+min-height:100vh;
 }
 
 .card{
+width:380px;
 background:#1e293b;
-padding:30px;
+padding:25px;
 border-radius:15px;
-width:350px;
+box-shadow:0 0 20px rgba(0,0,0,.3);
+}
+
+h2{
 text-align:center;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
+margin-bottom:10px;
+box-sizing:border-box;
 }
 
 button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:8px;
 background:#ff444f;
 color:white;
-border:none;
-padding:12px 24px;
-border-radius:8px;
 cursor:pointer;
 font-size:16px;
+margin-top:8px;
 }
 
 .info{
 margin-top:20px;
-text-align:left;
+line-height:2;
+}
+
+.status{
+padding:10px;
+border-radius:8px;
+background:#334155;
+margin-bottom:15px;
+text-align:center;
 }
 </style>
 
 </head>
-
 <body>
 
 <div class="card">
 
 <h2>Ninafx Dashboard</h2>
-<a href="https://oauth.deriv.com/oauth2/authorize?app_id=33B8TV783NLThvGjFGeE7&redirect_uri=https://ninajk123.github.io/deriv-dashboard/">
-<button>Login with Deriv</button>
-</a>
+
+<div class="status" id="status">
+Not Connected
+</div>
+
+<input
+type="password"
+id="token"
+placeholder="Paste Deriv PAT Token">
+
+<button onclick="connectDeriv()">
+Connect Account
+</button>
+
+<button onclick="logout()">
+Logout
+</button>
 
 <div class="info">
-<p>Status: Not Connected</p>
-<p>Account: -</p>
-<p>Balance: -</p>
-<p>Currency: -</p>
+<div>Account ID: <span id="account">-</span></div>
+<div>Balance: <span id="balance">-</span></div>
+<div>Currency: <span id="currency">-</span></div>
 </div>
 
 </div>
+
+<script>
+
+const APP_ID = 1089;
+let ws;
+
+window.onload = () => {
+const savedToken = localStorage.getItem("deriv_token");
+
+if(savedToken){
+document.getElementById("token").value = savedToken;
+connectDeriv();
+}
+};
+
+function connectDeriv(){
+
+const token =
+document.getElementById("token").value.trim();
+
+if(!token){
+alert("Enter PAT token");
+return;
+}
+
+localStorage.setItem("deriv_token",token);
+
+document.getElementById("status").innerText =
+"Connecting...";
+
+ws = new WebSocket(
+`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`
+);
+
+ws.onopen = () => {
+
+ws.send(JSON.stringify({
+authorize: token
+}));
+
+};
+
+ws.onmessage = (event) => {
+
+const data = JSON.parse(event.data);
+
+if(data.error){
+
+document.getElementById("status").innerText =
+"Authorization Failed";
+
+alert(data.error.message);
+return;
+}
+
+if(data.msg_type === "authorize"){
+
+document.getElementById("status").innerText =
+"Connected";
+
+document.getElementById("account").innerText =
+data.authorize.loginid;
+
+document.getElementById("balance").innerText =
+data.authorize.balance;
+
+document.getElementById("currency").innerText =
+data.authorize.currency;
+
+}
+
+};
+
+ws.onerror = () => {
+document.getElementById("status").innerText =
+"Connection Error";
+};
+
+}
+
+function logout(){
+
+localStorage.removeItem("deriv_token");
+
+if(ws){
+ws.close();
+}
+
+document.getElementById("token").value = "";
+
+document.getElementById("status").innerText =
+"Not Connected";
+
+document.getElementById("account").innerText = "-";
+document.getElementById("balance").innerText = "-";
+document.getElementById("currency").innerText = "-";
+
+}
+
+</script>
 
 </body>
 </html>
-
